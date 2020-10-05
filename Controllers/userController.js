@@ -172,7 +172,8 @@ module.exports.login=(req,res)=>{
             success:true,
             id:fetchedUser._id,
             token:token,
-            role:fetchedUser.role
+            role:fetchedUser.role,
+            username:fetchedUser.username
         });
         } 
     })
@@ -184,3 +185,76 @@ module.exports.login=(req,res)=>{
         });
     });
 }
+
+module.exports.change=(req,res)=>{
+    console.log(req.body);
+    console.log("enter change password");
+    let password;
+    bcrypt.hash(req.body.new,10)
+                .then(hash=>{
+                        password=hash;
+                        console.log(password);
+                    });
+    User.findById({_id:ObjectId(req.body.id)},(err,docs)=>{
+        if(err)
+        {
+            console.log(err);
+            res.status(401).json({
+                success:false,
+                message:'DB error'
+            }); 
+        }
+        else
+        {
+            console.log("hlo");
+            console.log(docs);
+            console.log("else part");
+            bcrypt.hash(req.body.old,10)
+            .then(hash=>{
+                    console.log(hash);
+                });
+                console.log(req.body.new);
+                console.log(docs.password);
+            bcrypt.compare(req.body.old,docs.password).then(result=>{
+                console.log(result)
+                if(result)
+                {
+                    console.log("new password");
+                    console.log(password);
+                    User.findByIdAndUpdate({_id:req.body.id},
+                        {
+                            
+                            $set:{ "password": password} 
+                        },
+                        {
+                            upsert:true,new:true
+                        },
+                        function(err,docs){
+                            if(err)
+                            {
+                                console.log(err);
+                                res.status(401).json({
+                                    success:false,
+                                    message:'DB error'
+                                });
+                            }
+                            else
+                            {
+                                res.json(docs);
+                            }
+                        })
+                }
+                else
+                {
+                    res.status(401).json({
+                        success:false,
+                        message:'wrong old password'
+                    });
+                }
+            });
+            
+           
+        }
+    })
+}
+

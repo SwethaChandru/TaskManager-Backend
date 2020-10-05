@@ -9,5 +9,6 @@ router.get('/:id',userCon.getuserById);
 router.get('/getuser/:id',userCon.getuser);
 router.delete('/:id',userCon.deleteuser);
 router.put('/',userCon.updateUser);
+router.put('/change',userCon.change);
 
 module.exports=router;

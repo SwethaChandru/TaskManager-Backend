@@ -23,6 +23,9 @@ var TaskSchema = mongoose.Schema({
     adminid:
     {
         type:String
+    },
+    reason:{
+        type:String
     }
 })
 
