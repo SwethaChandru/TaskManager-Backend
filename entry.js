@@ -26,7 +26,7 @@ app.use('/task',troute);
 // const reqroute=require('./routes/requestRoute');
 // app.use('/request',reqroute);
 
-const PORT= process.env||3000;
+const PORT= process.env.PORT||3000;
 
 app.get('/',function(req,res){
   res.send("Sample Application Name")
