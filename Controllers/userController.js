@@ -1,7 +1,25 @@
 const bcrypt=require('bcrypt');
 const User=require('../Models/userModel');
 const jwt=require('jsonwebtoken');
+var nodemailer = require('nodemailer');
 var ObjectId = require('mongoose').Types.ObjectId;
+
+module.exports.profile=(req,res)=>{
+    console.log("enter profile");
+    User.findById({_id:ObjectId(req.params.id)},(err,docs)=>{
+        if(err)
+        {
+            res.status(401).json({
+                success:false,
+                message:'DB error'
+            }); 
+        }
+        else
+        {
+            res.send(docs);
+        }
+    })
+}
 
 module.exports.getuser=(req,res)=>{
     console.log("enter getuser");
@@ -96,6 +114,30 @@ module.exports.add=(req,res)=>{
         }
         else{
             if(docs===null){
+
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: 'kylashp24@gmail.com',
+                      pass: 'pleasegod@1524'
+                    }
+                  });
+                  
+                  var mailOptions = {
+                    from: 'kylashp24@gmail.com',
+                    to: req.body.email,
+                    subject: 'Sending Email using Node.js',
+                    text: 'Your username is : '+ req.body.username+" || Password : "+ req.body.password
+                  };
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      console.log('Email sent: ' + info.response);
+                    }
+                  });
+
                 bcrypt.hash(req.body.password,10)
                 .then(hash=>{
                     const user=new User({

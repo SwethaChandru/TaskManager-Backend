@@ -13,5 +13,7 @@ router.get('/usertask/:username',taskCon.getTaskByuser);
 router.get("/edit/:id",taskCon.getTaskForEdit);
 router.get('/:date/:id',taskCon.getTaskByDate);
 router.get('/user/:date/:uname',taskCon.UserTaskByDate);
+router.get("/filter/:date/:value/:id",taskCon.filter)
+router.get("/filteruser/:date/:value/:uname",taskCon.userfilter);
 
 module.exports=router;

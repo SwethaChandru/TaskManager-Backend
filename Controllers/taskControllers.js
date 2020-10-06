@@ -1,6 +1,47 @@
 const taskModel = require('../Models/taskModel');
+const User=require('../Models/userModel');
 const Task=require('../Models/taskModel');
 var ObjectId = require('mongoose').Types.ObjectId;
+
+module.exports.filter=(req,res)=>{
+    console.log("adminfilter");
+    var query = {
+        adminid:req.params.id
+    };
+    if((req.params.value)!="all")
+    {
+        query.status=req.params.value;
+    }
+    if((req.params.date)!=' ') {
+        query.date=req.params.date
+    }
+    console.log(query);
+    Task.find(query).exec(function(err, docs){
+        res.send(docs);
+        console.log(docs);
+    });
+}
+
+module.exports.userfilter=(req,res)=>{
+    console.log("user filter");
+    console.log(req.params.value);
+    var query = {
+        userAssigned:req.params.uname
+    };
+
+    if((req.params.value)!='all')
+    {
+        query.status=req.params.value;
+    }
+    if((req.params.date)!=' ') {
+        query.date=req.params.date
+    }
+    console.log(query);
+    Task.find(query).exec(function(err, docs){
+        res.send(docs);
+        console.log(docs);
+    });
+}
 
 module.exports.getTaskByDate=(req,res)=>{
     console.log("enter get taskbydate")
@@ -21,19 +62,30 @@ module.exports.getTaskByDate=(req,res)=>{
 
 module.exports.UserTaskByDate=(req,res)=>{
     console.log("enter get usertaskbydate")
-    Task.find({date:req.params.date,userAssigned:req.params.uname},(err,docs)=>{
+    console.log(req.params.date);
+    console.log(req.params.uname);
+    Task.aggregate([
+        { $match: {date:new Date(req.params.date),userAssigned:req.params.uname} },
+        { $addFields: { adminid: { $toObjectId: '$adminid' } } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'adminid',
+            foreignField: '_id',
+            as: 'products'
+          }
+        },
+        { $unwind: '$products' },
+      ]).exec((err,docs)=>{
         if(err)
         {
-            res.status(401).json({
-                success:false,
-                message:'DB error'
-            }); 
+            res.send(err);
         }
         else
         {
             res.send(docs);
-        }
-    })
+        }  
+      })
 }
 
 module.exports.getTaskForEdit=(req,res)=>{
@@ -54,6 +106,7 @@ module.exports.getTaskForEdit=(req,res)=>{
 }
 
 module.exports.getTaskByAdmin=(req,res)=>{
+    console.log("enter get task by admin");
     console.log(req.params.id);
     Task.find({adminid:req.params.id},(err,docs)=>{
         if(err)
@@ -71,23 +124,31 @@ module.exports.getTaskByAdmin=(req,res)=>{
     })
 }
 
-
 module.exports.getTaskByuser=(req,res)=>{
+    console.log("enter get task by user")
     console.log(req.params.username);
-    Task.find({userAssigned:req.params.username},(err,docs)=>{
+    Task.aggregate([
+        { $match: {userAssigned:req.params.username} },
+        { $addFields: { adminid: { $toObjectId: '$adminid' } } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'adminid',
+            foreignField: '_id',
+            as: 'products'
+          }
+        },
+        { $unwind: '$products' },
+      ]).exec((err,docs)=>{
         if(err)
         {
-            console.log(err);
-            res.status(401).json({
-                success:false,
-                message:'DB error'
-            });
+            res.send(err);
         }
         else
         {
             res.send(docs);
-        }
-    })
+        }  
+      })
 }
 
 module.exports.add=(req,res)=>{
@@ -213,4 +274,5 @@ module.exports.deletetask=(req,res)=>{
         }
     })
 }
+
 

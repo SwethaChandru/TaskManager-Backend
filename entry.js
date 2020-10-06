@@ -7,8 +7,8 @@ var app=express();
 app.use(cors({}));
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true })); 
-
-mongoose.connect('mongodb://localhost:27017/TaskManager', { useNewUrlParser: true }, (err) => {
+//mongodb://localhost:27017/TaskManager
+mongoose.connect('mongodb+srv://swetha:root@cluster0.t9p2e.mongodb.net/db?retryWrites=true&w=majority', { useNewUrlParser: true }, (err) => {
     if (err) {
       console.log(err);
       console.log('Error while Connecting!')
