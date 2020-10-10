@@ -5,7 +5,6 @@ var nodemailer = require('nodemailer');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports.profile=(req,res)=>{
-    console.log("enter profile");
     User.findById({_id:ObjectId(req.params.id)},(err,docs)=>{
         if(err)
         {
@@ -22,7 +21,6 @@ module.exports.profile=(req,res)=>{
 }
 
 module.exports.getuser=(req,res)=>{
-    console.log("enter getuser");
     User.find({adminId:req.params.id},(err,docs)=>{
         if(err){
             res.status(401).json({
@@ -38,7 +36,6 @@ module.exports.getuser=(req,res)=>{
 }
 
 module.exports.getuserById=(req,res)=>{
-    console.log("enter get user by id");
     User.findById({_id:ObjectId(req.params.id)},(err,docs)=>{
         if(err)
         {
@@ -55,8 +52,6 @@ module.exports.getuserById=(req,res)=>{
 }
 
 module.exports.updateUser=(req,res)=>{
-    console.log("enter update user");
-    console.log(req.body);
     User.findByIdAndUpdate({_id:ObjectId(req.body.id)},
         {
              
@@ -70,7 +65,6 @@ module.exports.updateUser=(req,res)=>{
         function(err,docs){
             if(err)
             {
-                console.log(err);
                 res.status(401).json({
                     success:false,
                     message:'DB error'
@@ -102,9 +96,6 @@ module.exports.deleteuser=(req,res)=>{
 }
 
 module.exports.add=(req,res)=>{
-    console.log("enter signup");
-    console.log(req.body);
-
     User.findOne({email:req.body.email},(err,docs)=>{
         if(err){
             res.status(401).json({
@@ -195,7 +186,6 @@ module.exports.login=(req,res)=>{
                 message:"invalid user name"
             });
         }
-        
         fetchedUser=user;
         return bcrypt.compare(req.body.password,user.password);
     })
@@ -229,8 +219,6 @@ module.exports.login=(req,res)=>{
 }
 
 module.exports.change=(req,res)=>{
-    console.log(req.body);
-    console.log("enter change password");
     let password;
     bcrypt.hash(req.body.new,10)
                 .then(hash=>{

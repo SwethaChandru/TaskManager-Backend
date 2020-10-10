@@ -5,7 +5,6 @@ var ObjectId = require('mongoose').Types.ObjectId;
 
 
 module.exports.getTaskForEdit=(req,res)=>{
-    console.log("enter get task for edit")
     taskModel.findById({_id:ObjectId(req.params.id)},(err,docs)=>{
         if(err)
         {
@@ -22,12 +21,9 @@ module.exports.getTaskForEdit=(req,res)=>{
 }
 
 module.exports.getTaskByAdmin=(req,res)=>{
-    console.log("enter get task by admin");
-    console.log(req.params.id);
     Task.find({adminid:req.params.id},(err,docs)=>{
         if(err)
         {
-            console.log(err);
             res.status(401).json({
                 success:false,
                 message:'DB error'
@@ -41,8 +37,6 @@ module.exports.getTaskByAdmin=(req,res)=>{
 }
 
 module.exports.getTaskByuser=(req,res)=>{
-    console.log("enter get task by user")
-    console.log(req.params.username);
     Task.aggregate([
         { $match: {userAssigned:req.params.username} },
         { $addFields: { adminid: { $toObjectId: '$adminid' } } },
@@ -68,8 +62,6 @@ module.exports.getTaskByuser=(req,res)=>{
 }
 
 module.exports.add=(req,res)=>{
-    console.log("enter add book");
-    console.log(req.body);
     const newTask=new Task({
         title:req.body.title,
         description:req.body.description,
@@ -94,7 +86,6 @@ module.exports.add=(req,res)=>{
 }
 
 module.exports.updateDelayStatus=(req,res)=>{
-    console.log("enter update delayed status");
     Task.findByIdAndUpdate({_id:ObjectId(req.body.id)},
         {
             $set:{ "status":req.body.status,"reason":req.body.reason} 
@@ -105,7 +96,6 @@ module.exports.updateDelayStatus=(req,res)=>{
         function(err,docs){
             if(err)
             {
-                console.log(err);
                 res.status(401).json({
                     success:false,
                     message:'DB error'
@@ -118,7 +108,6 @@ module.exports.updateDelayStatus=(req,res)=>{
         })   
 }
 module.exports.updateComstatus=(req,res)=>{
-    console.log("enter update status");
     Task.findByIdAndUpdate({_id:ObjectId(req.body.id)},
         {
             $set:{ "status":req.body.status} 
@@ -129,7 +118,6 @@ module.exports.updateComstatus=(req,res)=>{
         function(err,docs){
             if(err)
             {
-                console.log(err);
                 res.status(401).json({
                     success:false,
                     message:'DB error'
@@ -143,8 +131,6 @@ module.exports.updateComstatus=(req,res)=>{
 }
 
 module.exports.updateTask=(req,res)=>{
-    console.log("enter update task");
-    console.log(req.body);
     Task.findByIdAndUpdate({_id:ObjectId(req.body.id)},
         {
              
@@ -158,7 +144,6 @@ module.exports.updateTask=(req,res)=>{
         function(err,docs){
             if(err)
             {
-                console.log(err);
                 res.status(401).json({
                     success:false,
                     message:'DB error'
